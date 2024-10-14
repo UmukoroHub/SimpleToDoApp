@@ -4,21 +4,19 @@ using SimpleToDoApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-// Register ToDoAppDbContext for both application data and Identity
+// Configure services
 builder.Services.AddDbContext<ToDoAppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure Identity to use ToDoAppDbContext
-//builder.Services.AddDefaultIdentity<IdentityUser>()
-//    .AddEntityFrameworkStores<ToDoAppDbContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ToDoAppDbContext>();
+
+builder.Services.AddRazorPages();   
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -30,14 +28,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Must come before UseAuthorization
+app.UseAuthentication();  // Important for Identity
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=ToDoList}/{action=Index}/{id?}"
-);
+    pattern: "{controller=ToDoList}/{action=Index}/{id?}");
 
-//app.MapRazorPages(); // Required for Identity UI
+app.MapRazorPages();  // If using Razor Pages
 
 app.Run();

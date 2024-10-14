@@ -3,6 +3,7 @@ using SimpleToDoApp.Data;
 using SimpleToDoApp.Models;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SimpleToDoApp.Controllers
 {
@@ -20,12 +21,15 @@ namespace SimpleToDoApp.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Details()
         {
             var lists = _db.ToDoItems.ToList();
             return View(lists);
         }
 
+
+        [Authorize]
         [HttpGet]
         public IActionResult Create()
         {
